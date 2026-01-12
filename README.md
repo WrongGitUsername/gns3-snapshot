@@ -1,108 +1,205 @@
-GNS3 Snapshot & Thumbnail Generator 🚀
+# gns3-snapshot
 
-A high-performance, parallelized Python tool to generate professional network topology thumbnails and snapshots directly from the GNS3 REST API.
+High-performance, parallelized Python tool to generate professional network topology thumbnails and snapshots directly from a GNS3 server. Designed for automation at scale — it renders crisp PNG images using SVG logic, supports fetching official GNS3 node icons (with fallbacks), and exposes both a CLI and a simple Python API.
 
-Unlike standard exports, gns3-snapshot uses multi-threading and intelligent caching to process dozens of projects in seconds, rendering them into clean PNG/SVG images with support for custom icons, interface labels, and background colors.
-✨ Key Features
+- Status: Production-ready
+- Language: Python 3.12+
+- License: MIT
 
-    ⚡ High Performance: Built-in ThreadPoolExecutor with auto-detection of optimal worker counts for I/O-bound tasks.
+---
 
-    🎨 Professional Rendering: Generates crisp thumbnails using SVG logic, with support for:
+## Key features
 
-        GNS3 Node Icons: Fetches symbols directly from the GNS3 server or falls back to GitHub repositories.
+- Fast, parallel processing with ThreadPoolExecutor and auto-tuned worker counts for I/O-bound workloads.
+- Professional rendering using SVG logic → clean, high-DPI PNG thumbnails.
+- Node icons: fetches symbols from the GNS3 server or falls back to configured GitHub/icon sources.
+- Interface/port labels (e.g., `e0/0`, `Gi1/1`) for improved readability.
+- Thread-safe icon cache to avoid redundant network requests.
+- Usable as a CLI tool or importable library for automation pipelines.
 
-        Interface Labels: Clear visibility of port connections (e.g., e0/0, Gi1/1).
+---
 
-        Custom Styling: Adjustable node sizes, font sizes, and background colors.
+## Requirements
 
-    🧵 Thread-Safe Caching: Implements a shared, thread-locked icon cache to prevent redundant network requests.
+- Python 3.12 or newer
+- A running GNS3 server reachable from the machine running this tool
+- Python packages:
+  - requests
+  - pillow
+  - cairosvg
 
-    🛠️ Dual-Purpose: Use it as a Command Line Tool (CLI) or import it as a Python Library in your own automation scripts.
+---
 
-🚀 Quick Start
-1. Prerequisites
+## Installation
 
-Ensure you have Python 3.12+ installed. You will need a running GNS3 server.
-2. Installation
-Bash
+Clone the repository and install dependencies:
 
-# Clone the repository
+```bash
 git clone https://github.com/WrongGitUsername/gns3-snapshot.git
 cd gns3-snapshot
-
-# Install dependencies
+pip install -r requirements.txt
+# or
 pip install requests pillow cairosvg
+```
 
-3. Basic Usage (CLI)
+(If you prefer, install into a virtual environment.)
 
-Generate thumbnails for specific projects by providing their IDs:
-Bash
+---
 
-python3 -m gns3_snapshot --project-ids "UUID1,UUID2" --server "http://192.168.1.10:3080"
+## Quick start (CLI)
 
-Bash
+Generate thumbnails for one or more projects by project ID(s):
 
-python3 gns3_snapshot.py --project-ids 1af4f7ab-0f09-40b7-9fc9-b2208d8caab8,f5011b76-706b-4598-8238-7fdb72d1df3f,3b54fa44-949a-4ee7-b1bb-d6c007de5841,4c160cdc-9a0c-4e99-a4b6-e18c895c974f,361805d5-6616-4efa-9b6d-dbf2999edc14,09ced82b-62c9-46ba-90ce-52577c795abc --node-size 120 --font-size 20 --no-interface-labels --background white --padding 100 --use-node-icons 
+Single project:
+```bash
+python3 -m gns3_snapshot --project-ids "1af4f7ab-0f09-40b7-9fc9-b2208d8caab8" --server "http://192.168.1.10:3080"
+```
 
+Multiple projects:
+```bash
+python3 -m gns3_snapshot --project-ids "UUID1,UUID2,UUID3" --server "http://localhost:3080" --output-dir ./my_shots
+```
 
-Common Flags:
+Common flags:
+- `--server` : GNS3 Server URL (default: `http://localhost:3080`)
+- `--project-ids` : Comma-separated list of project UUIDs (required)
+- `--output-dir` : Directory to save images (default: `./thumbnails`)
+- `--width` : Thumbnail width in pixels (default: `1200`)
+- `--height` : Thumbnail height in pixels (default: `800`)
+- `--workers` : Number of parallel worker threads, or `auto` to detect (default: `auto`)
+- `--use-node-icons` : Use actual GNS3 symbols instead of generic shapes (flag)
+- `--background` : Background color (CSS color string, default: `white`)
+- `--no-interface-labels` : Hide port/interface labels on links (flag)
+- `--verbose` : Enable verbose logging
 
-    --use-node-icons: Use actual GNS3 symbols instead of generic shapes.
+Example with auto workers and node icons:
+```bash
+python3 -m gns3_snapshot \
+  --project-ids "proj-uuid-1,proj-uuid-2" \
+  --server "http://192.168.1.10:3080" \
+  --workers auto \
+  --use-node-icons \
+  --output-dir ./shots
+```
 
-    --workers auto: Automatically optimize performance based on your CPU.
+---
 
-    --output-dir ./my_shots: Specify where to save the images.
+## Usage as a library
 
-📦 Using as a Library
+Import and use the generator in your own scripts or automation pipelines.
 
-You can easily integrate the generator into your own Python projects:
-Python
-
+Example:
+```python
 from gns3_snapshot import GNS3ThumbnailGenerator
 
-# Initialize the generator
 generator = GNS3ThumbnailGenerator(
     server_url="http://localhost:3080",
     output_dir="thumbnails",
-    use_node_icons=True
+    use_node_icons=True,
+    width=1200,
+    height=800,
 )
 
-# Generate a single thumbnail
 success, path = generator.generate_thumbnail("your-project-uuid-here")
-
 if success:
     print(f"Success! Thumbnail saved to {path}")
+else:
+    print("Failed to generate thumbnail for project.")
+```
 
-🛠️ Configuration Options
-Argument	Description	Default
---server	GNS3 Server URL	http://localhost:3080
---width	Thumbnail Width (px)	1200
---height	Thumbnail Height (px)	800
---workers	Parallel threads (auto or int)	auto
---background	Background color	white
---no-interface-labels	Hide port labels on links	False
-🧪 Testing & Coverage
+API highlights:
+- `GNS3ThumbnailGenerator(server_url, output_dir, use_node_icons=True, width=1200, height=800, workers='auto', background='white', no_interface_labels=False)` — constructor with sensible defaults.
+- `generate_thumbnail(project_id)` — generates a single thumbnail, returns `(success: bool, path: str|None)`.
+- There are batch helpers to generate thumbnails for a list of projects with parallelization and progress reporting.
 
-The project maintains a robust test suite using pytest. We use mocking to simulate GNS3 API responses, ensuring the rendering logic is fully verified.
-Bash
+---
 
-# Run tests with coverage report
+## Configuration options (defaults)
+
+| Option | Description | Default |
+|---|---:|---|
+| server | GNS3 Server URL | `http://localhost:3080` |
+| username | GNS3 Username | `(optional)` |
+| password | GNS3 Password | `(optional)` |
+| project-ids | Comma-separated list of GNS3 project UUIDs | `(mandatory)` |
+| output_dir | Directory to save thumbnails | `thumbnails` |
+| width | Thumbnail width (px) | `1200` |
+| height | Thumbnail height (px) | `800` |
+| padding | Padding around topology in pixels | `40` |
+| node-size | Size of node icons (px) | `60` |
+| font-size | Font size for labels | `12` |
+| no_interface_labels | Hide port labels | `False` |
+| background | Background color | `white` |
+| workers | Number of parallel workers, or "auto" for auto-detection | `auto` |
+| quiet | Suppress progress messages | `False` |
+| verbose | Enable verbose output | `True` |
+| use_node_icons | Use GNS3 node icons instead of colored shapes | `True` |
+
+---
+
+## Implementation notes
+
+- Icon caching is thread-safe: the cache is shared and protected by locks to avoid redundant network requests when multiple threads request the same asset.
+- When node icons aren't available from the GNS3 server, the tool falls back to pre-configured sources (e.g., a GitHub repository mirror or bundled icons).
+- Rendering uses SVG-to-PNG conversion (via cairosvg) to ensure vector-based crisp output regardless of target size.
+
+---
+
+## Testing & CI
+
+The project includes a test suite using pytest and uses mocking to simulate GNS3 API responses so rendering logic can be validated offline.
+
+Run tests with coverage:
+```bash
 python3 -m pytest --cov=gns3_snapshot tests/
+```
 
-🤝 Contributing
+CI recommendations:
+- Run tests in a matrix for supported Python versions.
+- Cache pip dependencies and test artifacts where appropriate.
+- Optionally run a small integration job against a disposable GNS3 server for end-to-end verification.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
 
-    Fork the Project
+## Troubleshooting
 
-    Create your Feature Branch (git checkout -b feature/AmazingFeature)
+- Timeout / connection errors: confirm the `--server` URL and that the GNS3 server is reachable from the runner/machine.
+- Missing icons: enable `--use-node-icons` only if the server exposes symbols; otherwise the fallback will be used.
+- Slow runs: set `--workers` to a reasonable number for your environment (start at #cores * 2 for I/O-heavy tasks, or use `auto`).
 
-    Commit your Changes (git commit -m 'Add some AmazingFeature')
+---
 
-    Push to the Branch (git push origin feature/AmazingFeature)
+## Contributing
 
-    Open a Pull Request
+Contributions are welcome — please follow these steps:
 
-📄 License
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/YourFeature`
+3. Make changes and add tests where applicable.
+4. Commit: `git commit -m "Add some feature"`
+5. Push: `git push origin feature/YourFeature`
+6. Open a Pull Request describing the change and motivation.
 
-Distributed under the MIT License. See LICENSE for more information.
+Please keep changes small and focused. Include unit tests for new behavior and update documentation where needed.
+
+---
+
+## Roadmap / Ideas
+
+- Optional higher-DPI output and retina-ready export flags.
+- Plugin system for custom rendering or icon sources.
+- Native thumbnail caching and incremental updates for frequently changing projects.
+
+If you'd like to see a specific feature prioritized, open an issue or a discussion in the repo.
+
+---
+
+## License
+
+Distributed under the MIT License. See LICENSE for details.
+
+---
+
+## Contact
+
+If you find bugs or have questions, please open an issue on the repository: https://github.com/WrongGitUsername/gns3-snapshot
