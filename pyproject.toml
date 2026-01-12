@@ -1,0 +1,111 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gns3-snapshot"
+version = "1.0.0"
+description = "High-performance thumbnail generator for GNS3 network topologies"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT"}
+authors = [
+    {name = "WrongGitUsername"}
+]
+maintainers = [
+    {name = "WrongGitUsername"}
+]
+keywords = [
+    "gns3",
+    "network",
+    "topology",
+    "thumbnail",
+    "visualization",
+    "networking",
+    "diagram",
+    "snapshot"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: System :: Networking",
+    "Topic :: Utilities",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests>=2.25.0",
+    "Pillow>=8.0.0",
+    "cairosvg>=2.5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=3.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+    "mypy>=0.950",
+    "isort>=5.10.0",
+    "pre-commit>=2.17.0",
+]
+test = [
+    "pytest",
+    "pytest-cov"
+]
+docs = [
+    "sphinx>=4.0.0",
+    "sphinx-rtd-theme>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/WrongGitUsername/gns3-snapshot"
+Documentation = "https://github.com/WrongGitUsername/gns3-snapshot#readme"
+Repository = "https://github.com/WrongGitUsername/gns3-snapshot"
+"Bug Tracker" = "https://github.com/WrongGitUsername/gns3-snapshot/issues"
+Changelog = "https://github.com/WrongGitUsername/gns3-snapshot/blob/main/CHANGELOG.md"
+
+[project.scripts]
+gns3-snapshot = "gns3_snapshot.gns3_topology_snapshot:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gns3_snapshot*"]
+exclude = ["tests*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--cov=gns3_snapshot",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+
+[tool.mypy]
+python_version = "3.7"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false

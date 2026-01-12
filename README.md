@@ -1,0 +1,75 @@
+# GNS3 Snapshot
+
+High-performance thumbnail generator for GNS3 network topologies.
+
+## Installation
+```bash
+pip install gns3-snapshot
+```
+
+## Quick Start
+
+### Command Line
+```bash
+gns3-snapshot --project-ids abc-123,def-456
+```
+
+### Python API
+```python
+from gns3_snapshot import generate_thumbnails
+
+results = generate_thumbnails(
+    project_ids=['abc-123', 'def-456'],
+    server_url='http://localhost:3080'
+)
+
+print(f"Generated {len(results['success'])} thumbnails")
+```
+
+## Features
+
+- 🚀 High-performance parallel processing
+- ⚡ Auto-detected optimal worker count
+- 🎨 Colored shapes or actual GNS3 node icons
+- 🔗 Complete topology rendering (nodes, links, labels)
+- 🛠️ Easy CLI and Python API
+
+## Configuration
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `server_url` | `http://localhost:3080` | GNS3 server URL |
+| `output_dir` | `thumbnails` | Output directory |
+| `thumbnail_width` | `1200` | Max width (px) |
+| `thumbnail_height` | `800` | Max height (px) |
+| `use_node_icons` | `False` | Use GNS3 icons |
+| `max_workers` | `auto` | Parallel workers |
+
+## License
+
+MIT License - see LICENSE file for details.
+```
+
+#### **`LICENSE`**
+```
+MIT License
+
+Copyright (c) 2024 gns3-snapshot contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
