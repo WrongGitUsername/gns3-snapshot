@@ -37,7 +37,7 @@ Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/WrongGitUsername/gns3-snapshot.git
 cd gns3-snapshot
-pip install -r requirements.txt
+pip install .
 # or
 pip install requests pillow cairosvg
 ```
