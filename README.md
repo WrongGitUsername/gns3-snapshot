@@ -96,8 +96,8 @@ generator = GNS3ThumbnailGenerator(
     server_url="http://localhost:3080",
     output_dir="thumbnails",
     use_node_icons=True,
-    width=1200,
-    height=800,
+    thumbnail_width=1200,
+    thumbnail_height=800,
 )
 
 success, path = generator.generate_thumbnail("your-project-uuid-here")
