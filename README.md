@@ -36,14 +36,13 @@ You can import gns3_snapshot into your own Python projects to automate documenta
 Clone the repository and install dependencies:
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 git clone https://github.com/WrongGitUsername/gns3-snapshot.git
-cd gns3-snapshot
+cd gns3-snapshot/
 pip install .
-# or
-pip install requests pillow cairosvg
 ```
 
-(If you prefer, install into a virtual environment.)
 
 ---
 
