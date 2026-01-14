@@ -66,8 +66,8 @@ class GNS3ThumbnailGenerator:
         username: Optional[str] = None,
         password: Optional[str] = None,
         output_dir: str = "thumbnails",
-        thumbnail_width: int = 1200,
-        thumbnail_height: int = 800,
+        width: int = 1200,
+        height: int = 800,
         padding: int = 40,
         background_color: str = "white",
         node_size: int = 60,
@@ -79,8 +79,8 @@ class GNS3ThumbnailGenerator:
         self.server_url = server_url.rstrip('/')
         self.auth = (username, password) if username and password else None
         self.output_dir = Path(output_dir)
-        self.thumbnail_width = thumbnail_width
-        self.thumbnail_height = thumbnail_height
+        self.width = width
+        self.height = height
         self.padding = padding
         self.background_color = background_color
         self.node_size = node_size
@@ -456,11 +456,11 @@ class GNS3ThumbnailGenerator:
             from io import BytesIO
             png_data = svg2png(bytestring=svg_content.encode('utf-8'))
             img = Image.open(BytesIO(png_data))
-            img.thumbnail((self.thumbnail_width, self.thumbnail_height), Image.LANCZOS)
+            img.thumbnail((self.width, self.height), Image.LANCZOS)
             
-            final_img = Image.new('RGB', (self.thumbnail_width, self.thumbnail_height), self.background_color)
-            x = (self.thumbnail_width - img.width) // 2
-            y = (self.thumbnail_height - img.height) // 2
+            final_img = Image.new('RGB', (self.width, self.height), self.background_color)
+            x = (self.width - img.width) // 2
+            y = (self.height - img.height) // 2
             final_img.paste(img, (x, y))
             final_img.save(output_path, 'PNG', optimize=True)
             return True
@@ -556,8 +556,8 @@ class GNS3ThumbnailGenerator:
             'username': self.auth[0] if self.auth else None,
             'password': self.auth[1] if self.auth else None,
             'output_dir': str(self.output_dir),
-            'thumbnail_width': self.thumbnail_width,
-            'thumbnail_height': self.thumbnail_height,
+            'width': self.width,
+            'height': self.height,
             'padding': self.padding,
             'background_color': self.background_color,
             'node_size': self.node_size,
@@ -614,8 +614,8 @@ def generate_thumbnails(
     username: Optional[str] = None,
     password: Optional[str] = None,
     output_dir: str = "thumbnails",
-    thumbnail_width: int = 1200,
-    thumbnail_height: int = 800,
+    width: int = 1200,
+    height: int = 800,
     max_workers: Union[int, str] = "auto",
     show_progress: bool = True,
     **kwargs
@@ -630,8 +630,8 @@ def generate_thumbnails(
         username: Optional username for authentication
         password: Optional password for authentication
         output_dir: Directory to save thumbnails (default: thumbnails)
-        thumbnail_width: Maximum width in pixels (default: 1200)
-        thumbnail_height: Maximum height in pixels (default: 800)
+        width: Maximum width in pixels (default: 1200)
+        height: Maximum height in pixels (default: 800)
         max_workers: Number of parallel workers. Use "auto" for auto-detection
                      or specify an integer (default: "auto")
         show_progress: Show progress information (default: True)
@@ -665,8 +665,8 @@ def generate_thumbnails(
         username=username,
         password=password,
         output_dir=output_dir,
-        thumbnail_width=thumbnail_width,
-        thumbnail_height=thumbnail_height,
+        width=width,
+        height=height,
         **kwargs
     )
     
@@ -769,8 +769,8 @@ Examples:
         username=args.username,
         password=args.password,
         output_dir=args.output_dir,
-        thumbnail_width=args.width,
-        thumbnail_height=args.height,
+        width=args.width,
+        height=args.height,
         padding=args.padding,
         node_size=args.node_size,
         font_size=args.font_size,
